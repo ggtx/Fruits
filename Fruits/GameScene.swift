@@ -12,6 +12,7 @@ import GameplayKit
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var blenderNode:SKSpriteNode!
+    var splitBottomLine:SKSpriteNode!
     var scoreLabel:SKLabelNode!
     var score:Int = 0 {
         didSet {
@@ -28,25 +29,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var yellowUIColor = UIColor(red: 1, green: 0.8667, blue: 0.3333, alpha: 1.0) /* #ffdd55 */
 
     
-    var fruitCategory:UInt32 = 0x1 << 1
+    var fruitCategory:UInt32 = 0x1 << 2
     var blenderCatrgory:UInt32 = 0x1 << 0
-    var appleCategory:UInt32 = 0x1 << 2
-    var grapeCategory:UInt32 = 0x1 << 3
+    var appleCategory:UInt32 = 0x1 << 3
+    var grapeCategory:UInt32 = 0x1 << 4
+    var bottomLineCategory:UInt32 = 0x1 << 1
+    var lineAndBlenderCategory:UInt32 = 3
     
     var touchLocation:CGPoint!
     
     var generate:UIImpactFeedbackGenerator!
+    var splitLine:SKSpriteNode!
+    
+    /*
+    self.physicsWorld.gravity = CGVector(dx: 0, dy: -0.6)
+    self.physicsWorld.contactDelegate = self
+ */
+    
     
     override func didMove(to view: SKView) {
-        blenderNode = SKSpriteNode(imageNamed: "red_blender_72")
-        blenderNode.position = CGPoint(x: self.frame.size.width / 2, y: blenderNode.size.height + 20)
-        blenderNode.physicsBody = SKPhysicsBody(rectangleOf: blenderNode.size)
-        blenderNode.physicsBody?.isDynamic = true
-        blenderNode.physicsBody?.categoryBitMask = blenderCatrgory
-        blenderNode.physicsBody?.contactTestBitMask = fruitCategory
-        blenderNode.physicsBody?.collisionBitMask = 0
-        self.addChild(blenderNode)
-        
+        // add score label
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         self.physicsWorld.contactDelegate = self
         
@@ -55,14 +57,54 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         scoreLabel.fontColor = UIColor.white
         scoreLabel.fontName = "AmericanTypewriter-Bold"
         scoreLabel.fontSize = 24
-        scoreLabel.zPosition = 1
+        scoreLabel.zPosition = 2
         score = 0
         self.addChild(scoreLabel)
         
+        // add top square
+        let square = SKSpriteNode(color: self.backgroundColor, size:CGSize(width: self.frame.size.width, height: 70))
+        square.position = CGPoint(x: self.frame.size.width / 2, y: self.frame.size.height - 35)
+        square.zPosition = 1
+        self.addChild(square)
+        
+        // add top split line
+        splitLine = SKSpriteNode(color: UIColor.brown, size: CGSize(width: self.frame.size.width, height: 3))
+        splitLine.position = CGPoint(x: self.frame.size.width / 2, y: self.frame.size.height - 70)
+        splitLine.zPosition = 2
+        self.addChild(splitLine)
+        
+        // add blender
+        blenderNode = SKSpriteNode(imageNamed: "bowl_72")
+        print(self.frame.size)
+        blenderNode.position = CGPoint(x: self.frame.size.width / 2, y: blenderNode.size.height + self.frame.size.height / 35)
+        // blenderNode.position = CGPoint(x: self.frame.size.width / 2, y: blenderNode.size.height + 20)
+        blenderNode.physicsBody = SKPhysicsBody(rectangleOf: blenderNode.size)
+        blenderNode.physicsBody?.isDynamic = true
+        blenderNode.physicsBody?.categoryBitMask = blenderCatrgory
+        // blenderNode.physicsBody?.contactTestBitMask = fruitCategory
+        blenderNode.physicsBody?.collisionBitMask = 0
+        self.addChild(blenderNode)
+        // blenderNode.physicsBody!.affectedByGravity = false
+        
+        // add bottom split line
+        splitBottomLine = SKSpriteNode(color: UIColor.brown, size: CGSize(width: self.frame.size.width, height: 3))
+        splitBottomLine.position = CGPoint(x: self.frame.size.width / 2, y: blenderNode.position.y - blenderNode.size.height / 2 - splitLine.size.height / 2 )
+        splitBottomLine.zPosition = 2
+        splitBottomLine.physicsBody = SKPhysicsBody(rectangleOf: splitBottomLine.size)
+        splitBottomLine.physicsBody?.categoryBitMask = bottomLineCategory
+        splitBottomLine.physicsBody?.collisionBitMask = 0
+        splitBottomLine.physicsBody?.isDynamic = true
+        self.addChild(splitBottomLine)
+        /*
+        // add bottom square
+        let squareBottom = SKSpriteNode(color: self.backgroundColor, size:CGSize(width: self.frame.size.width, height: 70))
+        squareBottom.position = CGPoint(x: self.frame.size.width / 2, y: splitBottomLine.position.y - squareBottom.size.height / 2)
+        squareBottom.zPosition = 1
+        self.addChild(squareBottom)
+ */
+        
         gameTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(addFruit), userInfo: nil, repeats: true)
         gameTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(targetColor), userInfo: nil, repeats: true)
-        
-        
     }
     
     @objc func targetColor() {
@@ -81,7 +123,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let fruit = SKSpriteNode(imageNamed: newFruit)
         let randomFruitXPosition = GKRandomDistribution(lowestValue: Int(fruit.size.width / 2) + 5, highestValue: Int(self.frame.size.width - fruit.size.width / 2))
         let fruitXPosition = CGFloat(randomFruitXPosition.nextInt())
-        fruit.position = CGPoint(x: fruitXPosition, y: self.frame.size.height + fruit.size.height)
+        fruit.position = CGPoint(x: fruitXPosition, y: splitLine.position.y + fruit.size.height / 2)
+        fruit.zPosition = 0
         
         fruit.physicsBody = SKPhysicsBody(rectangleOf: fruit.size)
         fruit.physicsBody?.isDynamic = true
@@ -93,19 +136,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         fruit.physicsBody?.categoryBitMask = fruitCategory
-        fruit.physicsBody?.contactTestBitMask = blenderCatrgory
+        // fruit.physicsBody?.contactTestBitMask = blenderCatrgory
+        fruit.physicsBody?.contactTestBitMask = lineAndBlenderCategory
         fruit.physicsBody?.collisionBitMask = 0
         fruit.physicsBody?.usesPreciseCollisionDetection = true
         
         self.addChild(fruit)
+        fruit.speed = 10
         
-        let animationDuration:TimeInterval = 8
+        // let animationDuration:TimeInterval = 8
         var fruitsActions = [SKAction]()
-        fruitsActions.append(SKAction.move(to: CGPoint(x: fruitXPosition, y: -fruit.size.height), duration: animationDuration))
+        //fruitsActions.append(SKAction.move(to: CGPoint(x: fruitXPosition, y: -fruit.size.height), duration: animationDuration))
+        fruitsActions.append(SKAction.move(to: CGPoint(x: fruitXPosition, y: -fruit.size.height), duration: Double(self.frame.size.height / fruit.speed)))
         fruitsActions.append(SKAction.removeFromParent())
-        
         fruit.run(SKAction.sequence(fruitsActions))
-        
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -119,7 +163,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             secondBody = contact.bodyA
         }
        
-        catchFruits(fruit: secondBody, blender: firstBody)
+        print(firstBody.categoryBitMask, secondBody.categoryBitMask)
+        if firstBody.categoryBitMask & bottomLineCategory == bottomLineCategory {
+            print(1)
+            dropOnFloor(fruit: secondBody, bottom: firstBody)
+        } else {
+            catchFruits(fruit: secondBody, blender: firstBody)
+        }
+    }
+    
+    func dropOnFloor(fruit:SKPhysicsBody, bottom:SKPhysicsBody) {
+        var explosion:SKEmitterNode!
+        explosion = SKEmitterNode(fileNamed: "explosion")
+        explosion.position = CGPoint(x: fruit.node!.position.x, y: bottom.node!.position.y)
+        self.addChild(explosion)
+        fruit.node!.removeFromParent()
+        self.run(SKAction.wait(forDuration: 0.5)) {
+            explosion.removeFromParent()
+        }
     }
     
     func catchFruits(fruit:SKPhysicsBody, blender:SKPhysicsBody) {
@@ -149,6 +210,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.run(SKAction.wait(forDuration: 2)) {
             splatter.removeFromParent()
         }
+    }
+    
+    @objc func genBonusFruitArray() {
         
     }
     

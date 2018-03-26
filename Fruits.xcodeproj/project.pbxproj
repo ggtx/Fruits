@@ -17,6 +17,7 @@
 		3B3C7BE8205E719600430A5B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B3C7BE6205E719600430A5B /* Main.storyboard */; };
 		3B3C7BEA205E719600430A5B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B3C7BE9205E719600430A5B /* Assets.xcassets */; };
 		3B3C7BED205E719600430A5B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B3C7BEB205E719600430A5B /* LaunchScreen.storyboard */; };
+		3BC703112066AEAF00136062 /* explosion.sks in Resources */ = {isa = PBXBuildFile; fileRef = 3BC703102066AEAF00136062 /* explosion.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		3B3C7BE9205E719600430A5B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3B3C7BEC205E719600430A5B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3B3C7BEE205E719600430A5B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3BC703102066AEAF00136062 /* explosion.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = explosion.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 				3B37ED002063F23C007387EA /* purple_spark.sks */,
 				3B3C7BE0205E719600430A5B /* Actions.sks */,
 				3B3C7BE2205E719600430A5B /* GameScene.swift */,
+				3BC703102066AEAF00136062 /* explosion.sks */,
 				3B3C7BE4205E719600430A5B /* GameViewController.swift */,
 				3B3C7BE6205E719600430A5B /* Main.storyboard */,
 				3B3C7BE9205E719600430A5B /* Assets.xcassets */,
@@ -143,6 +146,7 @@
 				3B37ED032063F261007387EA /* red_spark.sks in Resources */,
 				3B3C7BEA205E719600430A5B /* Assets.xcassets in Resources */,
 				3B3C7BED205E719600430A5B /* LaunchScreen.storyboard in Resources */,
+				3BC703112066AEAF00136062 /* explosion.sks in Resources */,
 				3B3C7BE1205E719600430A5B /* Actions.sks in Resources */,
 				3B37ED012063F23C007387EA /* purple_spark.sks in Resources */,
 			);
